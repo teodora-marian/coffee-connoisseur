@@ -1,12 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '@/styles/Home.module.css'
-
 import Banner from '@/components/banner'
 import Card from '@/components/card'
+
+import { useEffect, useState, useContext } from 'react'
 import { fetchCoffeeStores } from '@/lib/coffee-stores'
 import useTrackLocation from '@/hooks/use-track-location'
-import { useEffect, useState } from 'react'
+import { ACTION_TYPES, StoreContext } from '../storage/store-context'
 
 export async function getStaticProps(context) {
   console.log("hi getStaticProps");
@@ -22,13 +23,18 @@ export default function Home(props) {
   console.log("home props", props);
 
   //destructuring
-  const {handleTrackLocation, latLong, locationErrorMsg, isFindingLocation} = useTrackLocation();
-  console.log ({latLong, locationErrorMsg}); // same as logging ('latLong', latLong), when term repeats, can use {}
+  const {handleTrackLocation, locationErrorMsg, isFindingLocation} = useTrackLocation();
+  //console.log ({latLong, locationErrorMsg}); // same as logging ('latLong', latLong), when term repeats, can use {}
 
   //storing the returned results from user input into an external state
-  const [coffeeStores, setCoffeeStores] = useState('');
+  //const [coffeeStores, setCoffeeStores] = useState('');
+  //commented the above out, in order to get data from the useContext state, not the local useState
 
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
+
+  const {dispatch, state} = useContext(StoreContext);
+
+  const {coffeeStores, latLong} = state;
 
   console.log("====== HELLO MOTO ======", coffeeStores)
 
@@ -37,9 +43,16 @@ export default function Home(props) {
       try { 
         fetchCoffeeStores(latLong, 30).then (userStores => {
           console.log("===== after fetch =====> ", userStores)
-          setCoffeeStores(userStores)
+          // setCoffeeStores(userStores)
+          //commented out the above line, as I'm using the fetched results in useContext
+          dispatch({
+            type:ACTION_TYPES.SET_COFFEE_STORES,
+            payload:{
+              coffeeStores: userStores,
+            },
+          })
         });
-        
+
         //set coffee stores from user input
       } catch(error) {
         //set error
