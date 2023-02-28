@@ -24,7 +24,7 @@ const useTrackLocation = () => {
             payload:{latLong: `${latitude},${longitude}`}
         })
         setLocationErrorMsg(''); //clearing the error message in case of success
-        setIsFindingLocation(false);//no need for 'Loading...' in case of success
+        setIsFindingLocation(false);//no need for 'Locating...' in case of success
     };
     
     const error = () => {

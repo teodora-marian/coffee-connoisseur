@@ -41,14 +41,14 @@ export default function Home(props) {
   useEffect (() =>{
     if (latLong)
       try { 
-        fetchCoffeeStores(latLong, 30).then (userStores => {
-          console.log("===== after fetch =====> ", userStores)
-          // setCoffeeStores(userStores)
-          //commented out the above line, as I'm using the fetched results in useContext
+        fetchCoffeeStores(latLong, 30).then (userCoffeeStores =>{
+          //fetch(`/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=30`)
+          console.log("===== after fetch =====> ", userCoffeeStores)
+          
           dispatch({
             type:ACTION_TYPES.SET_COFFEE_STORES,
             payload:{
-              coffeeStores: userStores,
+              coffeeStores: userCoffeeStores,
             },
           })
         });
