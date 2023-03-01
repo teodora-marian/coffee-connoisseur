@@ -9,6 +9,7 @@ import { fetchCoffeeStores } from '@/lib/coffee-stores'
 import useTrackLocation from '@/hooks/use-track-location'
 import { ACTION_TYPES, StoreContext } from '../storage/store-context'
 
+
 export async function getStaticProps(context) {
   console.log("hi getStaticProps");
   const coffeeStores = await fetchCoffeeStores();
@@ -38,28 +39,32 @@ export default function Home(props) {
 
   console.log("====== HELLO MOTO ======", coffeeStores)
 
-  useEffect (() =>{
-    if (latLong)
-      try { 
-        fetchCoffeeStores(latLong, 30).then (userCoffeeStores =>{
-          //fetch(`/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=30`)
-          console.log("===== after fetch =====> ", userCoffeeStores)
+  useEffect (() => {
+    async function setCoffeeStoresByLocation() {
+      if (latLong) {
+        try {
+          const response = await fetch(
+            `/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=30`
+          );
+
+          const coffeeStores = await response.json();
+          // setCoffeeStores(fetchedCoffeeStores);
           
           dispatch({
-            type:ACTION_TYPES.SET_COFFEE_STORES,
-            payload:{
-              coffeeStores: userCoffeeStores,
-            },
-          })
-        });
-
-        //set coffee stores from user input
-      } catch(error) {
-        //set error
-        console.log({error}); 
-        setCoffeeStoresError(error.message);    
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: {coffeeStores},
+          });
+          setCoffeeStoresError(""); //clearing the value after success
+          //set coffee stores above
+        } catch (error) {
+          //set error
+          console.log({ error });
+          setCoffeeStoresError(error.message);
+        }
       }
-}, [latLong]); // declarring dependency, because we only want new coffee store rendered if we receive latLong from user
+    }
+    setCoffeeStoresByLocation();
+  }, [latLong]); // declarring dependency, because we only want new coffee store rendered if we receive latLong from user
 
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");

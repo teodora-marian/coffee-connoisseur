@@ -31,6 +31,6 @@ class MyDocument extends Document{
       </Html>
     );
   }
-}
+};
 
-export default MyDocument
+export default MyDocument;
