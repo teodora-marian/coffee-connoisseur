@@ -21,23 +21,25 @@ export async function getStaticProps(staticProps) {
     const coffeeStores = await fetchCoffeeStores();
     const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
         return coffeeStore.id.toString() === params.id; //dynamic id
-  });
+    });
+
     return {
       props: {
         coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
-    },
+    }
   };
 };
 
 export async function getStaticPaths() {
-  const coffeeStores = await fetchCoffeeStores();
-  const paths = coffeeStores.map((coffeeStore) => {
-    return {
-      params: {
+    const coffeeStores = await fetchCoffeeStores();
+    const paths = coffeeStores.map((coffeeStore) => {
+        return {
+            params: {
                 id: coffeeStore.id.toString(),
             }
         }
     });
+    
     return {
         paths,
         fallback: true,
@@ -56,21 +58,50 @@ const CoffeeStore = (initialProps) => {
     const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
     const {
-        state: {
-            coffeeStores
-        }
+        state: { coffeeStores },
     } = useContext(StoreContext);
+
+    const handleCreateCoffeeStore = async (coffeeStore) => {
+        try {
+            const {id, name, address, locality, voting, imgUrl} = coffeeStore;
+            const response = await fetch("/api/createCoffeeStore", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({
+                    id, 
+                    name, 
+                    address, 
+                    locality, 
+                    voting: 0, 
+                    imgUrl,
+                }),
+            });
+
+            const dbCoffeeStore = await response.json();
+            console.log({dbCoffeeStore})
+
+        } catch(err) {
+            console.log("Error creating coffee store", err)
+        }
+    };
 
     useEffect(() => {
         if (isEmpty(initialProps.coffeeStore)) {
             if (coffeeStores.length > 0) {
                 const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
                     return coffeeStore.id.toString() === id; //dynamic id
-              });
-                setCoffeeStore(findCoffeeStoreById);
+                });
+
+                if (findCoffeeStoreById){
+                    setCoffeeStore(findCoffeeStoreById);
+                    handleCreateCoffeeStore(findCoffeeStoreById); 
+                }   
             }
+        } else {
+            //SSG
+            handleCreateCoffeeStore(initialProps.coffeeStore);
         }
-    }, [id]);
+    }, [id, initialProps, initialProps.coffeeStore]);
 
     const {name, address, locality, imgUrl} = coffeeStore;
 
