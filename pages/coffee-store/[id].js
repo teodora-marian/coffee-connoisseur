@@ -107,7 +107,7 @@ const CoffeeStore = (initialProps) => {
 
     const {name, address, locality, imgUrl} = coffeeStore;
 
-    const [votingCount, setVotingCount] = useState (0);
+    const [votingCount, setVotingCount] = useState (1);
 
     const {data, error} = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
 
@@ -119,10 +119,25 @@ const CoffeeStore = (initialProps) => {
         }
     }, [data]);
 
-    const handleUpvoteButton = () => {
+    const handleUpvoteButton = async () => {
         console.log("handle upvote");
-        let count = votingCount + 1;
-        setVotingCount(count);
+
+        try {
+            const response = await fetch("/api/upvoteCoffeeStoreById", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({ id, }),
+            });
+
+            const dbCoffeeStore = await response.json();
+            console.log({dbCoffeeStore})
+            if (dbCoffeeStore && dbCoffeeStore.length > 0) {
+                let count = votingCount + 1;
+                setVotingCount(count);
+            };
+        } catch(err) {
+            console.log("Error upvoting coffee store", err)
+        }
     };
 
     if (error) {
