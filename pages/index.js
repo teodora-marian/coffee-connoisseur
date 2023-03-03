@@ -64,7 +64,7 @@ export default function Home(props) {
       }
     }
     setCoffeeStoresByLocation();
-  }, [latLong]); // declarring dependency, because we only want new coffee store rendered if we receive latLong from user
+  }, [latLong, dispatch]); // declarring dependency, because we only want new coffee store rendered if we receive latLong from user
 
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");
@@ -106,11 +106,11 @@ export default function Home(props) {
               href={`/coffee-store/${coffeeStore.id}`}
               className={styles.card}
               />
-            );
+            )
           })} 
         </div>
         </> 
-        )};
+        )}
         </div>
         
         <div className={styles.sectionWrapper}>

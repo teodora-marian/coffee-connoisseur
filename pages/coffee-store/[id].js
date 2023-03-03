@@ -51,17 +51,11 @@ export async function getStaticPaths() {
 const CoffeeStore = (initialProps) => {
     const router = useRouter();
 
-    if (router.isFallback) {
-        return <div>Loading...</div>;
-    }
-
     const id = router.query.id;
 
-    const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+    const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore || {});
 
-    const {
-        state: { coffeeStores },
-    } = useContext(StoreContext);
+    const { state: { coffeeStores } } = useContext(StoreContext);
 
     const handleCreateCoffeeStore = async (coffeeStore) => {
         try {
@@ -103,21 +97,29 @@ const CoffeeStore = (initialProps) => {
             //SSG
             handleCreateCoffeeStore(initialProps.coffeeStore);
         }
-    }, [id, initialProps, initialProps.coffeeStore]);
+    }, [id, initialProps, initialProps.coffeeStore, coffeeStores]);
 
-    const {name, address, locality, imgUrl} = coffeeStore;
+    const {
+        name = "", 
+        address = "", 
+        locality = "", 
+        imgUrl = "",
+    } = coffeeStore;
 
-    const [votingCount, setVotingCount] = useState (1);
+    const [votingCount, setVotingCount] = useState (0);
 
     const {data, error} = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
-
-    useEffect (() => {
-        if (data && data.length > 0 ) {
-            console.log("data from SWR", data);
-            setCoffeeStore(data[0]);
-            setVotingCount(data[0].voting);
+        useEffect (() => {
+            if (data && data.length > 0 ) {
+                console.log("data from SWR", data);
+                setCoffeeStore(data[0]);
+                setVotingCount(data[0].voting);
         }
     }, [data]);
+
+    if (router.isFallback) {
+        return <div>Loading...</div>;
+    };    
 
     const handleUpvoteButton = async () => {
         console.log("handle upvote");
