@@ -13,11 +13,12 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Also available at: https://coffee-connoisseur-eosin.vercel.app/
 
-## App build progress at the time of first commit:
+## Description:
 
 There is a home page which by default displays a grid view of 6 coffee shops from a pre-selected location. Each coffee shop is rendered on an individual card, with name & photo. The names of the coffee shops are being called with "getStaticProps" via Foursquare API using the "coffee" string for query, geolocation coordinates, and a limit of 6 results. The photos are called via Unsplash API using "coffee shop" for query.
 
-The home page also includes: a background created at meshgradient.com, a hero image provided in the resources of the course, a banner which holds the title of the app inside an `<h1>`, a simple `<p>` element for subtitle and a `<button>`. The button is not implemented at this time, but once functional, it will enable the user to locate coffee stores near their own location (should they accept to provide it).
+The home page also includes: a background created at meshgradient.com, a hero image provided in the resources of the course, a banner which holds the title of the app inside an `<h1>`, a simple `<p>` element for subtitle and a `<button>` element. The button enables the user to locate coffee stores near their own location (should they accept to provide it).
 
 From the home page, you can navigate dynamically with the use of "getStaticPaths" to pages for each individual coffee store, by clicking a card from the grid. Once open, the new dynamic route displays a new grid : on the left, a "back to home" link, the name of the selected coffee store and its photo; on the righ, a card with the exact address of the coffee store, the city where it's located, number of votes it received and a button for upvoting. Here, again, the button is not implemented at this time, but once functional, it will allow the user to upvote their favourite coffee shops, and the votes will add up to the existing number instantaneously. The button will not have a usage limit (user can upvote as many times as they desire).
